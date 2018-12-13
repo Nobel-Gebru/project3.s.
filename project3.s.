@@ -1,0 +1,151 @@
+.data
+	LongMessage: .asciiz "Input is too long."# print too long
+	invalidRange: .asciiz "Invalid base-34 number."# print invalid number
+	emptyInput: .asciiz "Input is empty."# print input is empty
+	spaceString: .space 10000# allocate memory to string
+
+.text
+
+main:
+	li $v0, 8  # assign a user input
+	la $a0, spaceString
+	li $a1, 10000
+	syscall
+	add $t1, $0, 0 
+	add $t3, $0, 0 
+	add $t7, $0, 2
+
+	la $t0, spaceString	
+	lb $t1,0($t0) 
+	
+	beq $t1, 10, Empty_Error # check if the input is 10
+	beq $t1, 0, Empty_Error	# branch if the input is 0 
+	addi $s0, $0, 34
+	addi $t4, $0, 1 	
+	addi $t5, $0, 0 	
+	
+jump_spaces:
+	lb $t1,0($t0) #sends register t1 value to t0
+	addi $t0, $t0, 1
+	addi $t3, $t3, 1
+	beq $t1, 32, jump_spaces # if the value of t1 is 32 call jump_spaces
+	beq $t1, $0, emptyInput_Error
+
+displayChar:
+	lb $t1,0($t0)
+	addi $t0, $t0, 1
+	addi $t3, $t3, 1
+	beq $t1, 10, restart_program
+	beq $t1, 0, restart_program
+	bne $t1, 32, displayChar
+	syscall
+	li $v0,10  
+	syscall
+	
+	
+spaces_or_chars:
+	lb $t1,0($t0)
+	addi $t0, $t0, 1
+	addi $t3, $t3, 1
+	beq $t1, 10, restart_program
+	beq $t1, 0, restart_program
+	bne $t1, 32, Invalid_Range_Error
+	j spaces_or_chars
+
+restart_program:
+	sub $t0, $t0, $t3 
+	la $t3, 0 			
+
+goForward:
+	lb $t1,0($t0)
+	addi $t0, $t0, 1
+	beq $t1, 32, goForward
+	
+addi $t0, $t0, -1
+
+callLength:
+	lb $t1, ($t0)
+	addi $t0, $t0, 1
+	addi $t3, $t3, 1 
+	beq $t1, 10, counter
+	beq $t1, 0, counter
+	beq $t1, 32, counter
+	beq $t3, 4, LongMessage_Error
+	j callLength
+	
+counter:
+	sub $t0, $t0, $t3
+	sub $t3, $t3, $t4
+	lb $t1, ($t0)
+	sub $s1, $t3, $t4
+	
+findExponent:	
+	beq $s1, 0, ASCII_conversion
+	mult $t4, $s0
+	mflo $t4
+	sub $s1, $s1, 1
+	j findExponent
+
+multiply:
+	mult $t1, $t4
+	mflo $t5			
+	add $t6, $t6, $t5 
+	
+	beq $t4, 1, Exit
+	div $t4, $s0 
+	mflo $t4
+add $t0, $t0, 1
+	lb $t1,0($t0)
+	j ASCII_conversion
+
+Exit:
+	move $a0, $t6 
+	li $v0, 1 
+syscall
+	li $v0,10
+	syscall
+	
+
+ASCII_conversion:
+	blt $t1, 51, Invalid_Range_Error
+	blt $t1, 61, Number
+	blt $t1, 68, Invalid_Range_Error 
+	blt $t1, 93, Upper_Case
+	blt $t1, 100, Invalid_Range_Error 
+	blt $t1, 125, Lower_Case
+	blt $t1, 131, Invalid_Range_Error 
+Upper_Case:
+	addi $t1, $t1, -55 
+	j multiply 			
+
+Lower_Case:
+addi $t1, $t1, -87 	
+	j multiply				
+
+Number:
+	addi $t1, $t1, -48 	
+	j multiply
+emptyInput_Error:
+	la $a0, emptyInput 
+	li $v0, 4 
+	syscall
+
+	li $v0,10 
+	syscall
+
+LongMessage_Error:
+	la $a0, LongMessage
+	li $v0, 4 		
+	syscall
+
+	li $v0,10 
+	syscall
+
+Invalid_Range_Error:
+	la $a0, invalidRange 
+	li $v0, 4 
+	syscall
+
+	li $v0,10 
+	syscall	 
+	jr $ra
