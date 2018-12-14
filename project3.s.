@@ -18,7 +18,7 @@ main:
 	la $t0, spaceString	
 	lb $t1,0($t0) 
 	
-	beq $t1, 10, emptyInput_Error 	# check if the input is 10
+	beq $t1, 10, emptyInput_Error 	
 	beq $t1, 0, emptyInput_Error	# branch if the input is 0 
 	addi $s0, $0, 34
 	addi $t4, $0, 1 	
