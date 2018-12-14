@@ -1,8 +1,8 @@
 .data
-	LongMessage: .asciiz "Input is too long."# print too long
-	invalidRange: .asciiz "Invalid base-34 number."# print invalid number
-	emptyInput: .asciiz "Input is empty."# print input is empty
-	spaceString: .space 10000# allocate memory to string
+	LongMessage: .asciiz "Input is too long." # print too long
+	invalidRange: .asciiz "Invalid base-34 number." # print invalid number
+	emptyInput: .asciiz "Input is empty." # print input is empty
+	spaceString: .space 10000 # allocate memory to string
 
 .text
 
