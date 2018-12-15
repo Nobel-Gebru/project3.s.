@@ -63,3 +63,16 @@ Uppercase:
 	and $t3, $t3, $t2 
 	addi $t9, $t0, -55     
 	beq $t3, 1, multiply 
+Lowercase:	
+	slti $t2, $t0, 121				
+	li $t3, 96
+	slt $t3, $t3, $t0
+	and $t3, $t3, $t2 
+	addi $t9, $t0, -87
+	bne $t3, 1, Invalid_Range_Error
+	
+multiply:
+	mul $t5, $t4, $t9			
+	add $s5, $s5, $t5
+	mul $t4, $t4, 30  
+	j checkCharacters
