@@ -79,3 +79,28 @@ conversion:
 	move $s5, $v0
 	move $t4, $v1
 	j checkCharacters
+	
+checkSpace:
+	beq $a3, 1, Invalid_Range_Error		
+	j checkCharacters
+	 	
+loopValidity:
+	li $v0, 1
+	add $a0, $zero, $s5
+	syscall
+	j exit
+LongMessage_Error:
+	li $v0, 4
+	la $a0, LongMessage		
+	syscall
+	j exit
+emptyInput_Error:
+	li $v0, 4
+	la $a0, emptyInput
+	syscall
+	j exit
+	
+Invalid_Range_Error: 
+	li $v0, 4			
+	la $a0, invalidRange
+	syscall
