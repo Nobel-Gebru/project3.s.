@@ -56,3 +56,10 @@ checkCharacters:
 	and $t3, $t3, $t2
 	addi $t9, $t0, -48
 	beq $t3, 1, multiply
+Uppercase:
+	slti $t2, $t0, 89
+	li $t3, 64 
+	slt $t3, $t3, $t0 
+	and $t3, $t3, $t2 
+	addi $t9, $t0, -55     
+	beq $t3, 1, multiply 
