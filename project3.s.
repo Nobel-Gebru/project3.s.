@@ -71,8 +71,11 @@ Lowercase:
 	addi $t9, $t0, -87
 	bne $t3, 1, Invalid_Range_Error
 	
-multiply:
-	mul $t5, $t4, $t9			
-	add $s5, $s5, $t5
-	mul $t4, $t4, 30  
+conversion:
+	move $a0, $t9		
+	move $a1, $t4
+	move $a2, $s5
+	jal multiply
+	move $s5, $v0
+	move $t4, $v1
 	j checkCharacters
