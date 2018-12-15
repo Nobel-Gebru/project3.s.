@@ -104,3 +104,13 @@ Invalid_Range_Error:
 	li $v0, 4			
 	la $a0, invalidRange
 	syscall
+	
+multiply:
+	mul $t5, $a1, $a0
+	add $v0, $t5, $a2
+	mul $v1, $a1, 30
+	jr $ra		
+		
+exit:
+	li $v0, 10
+	syscall
