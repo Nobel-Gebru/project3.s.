@@ -38,3 +38,21 @@ Loop:
 	# added 3 to $a1 because I have already read 4 characters from string
 	addi $a1, $a1, 3 		
 	j Loop
+	
+checkCharacters:
+	beq $t7, 4, loopValidity		
+	addi $t7, $t7, 1 
+	addi $s6, $s6, -1
+	lb $t0, ($s6)		
+	beq $t0, 32, checkSpace
+	beq $t0, 10, checkCharacters  	
+	beq $t0, 0, checkCharacters		
+	#checking if it is a valid digit
+	li $a3, 1
+	slti $t2, $t0, 58
+	
+	li $t3, 47
+	slt $t3, $t3, $t0
+	and $t3, $t3, $t2
+	addi $t9, $t0, -48
+	beq $t3, 1, multiply
