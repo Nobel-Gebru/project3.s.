@@ -9,67 +9,72 @@
 main:
 	li $v0, 8  # assign a user input
 	la $a0, spaceString
-	li $a1, 10000
+	li $a1, 1000	
 	syscall
 	la $a1, spaceString
 	li $t9, 0
-	
-	#la $t0, spaceString	
+
+	#la $t0, spaceString
 	#lb $t1,0($t0) 
-	
+
 Loop:
-	lb $a0,($a1)        			
+	lb $a0,($a1)
 	addi $a1, $a1, 1
-	beq $a0, 0, emptyloop		
-	beq $a0, 10, emptyloop		
+	beq $a0, 0, emptyloop
+	beq $a0, 10, emptyloop
 	beq $a0, 32, Loop
-	beq $t9, 1, LongMessage_Error 	
+	beq $t9, 1, LongMessage_Error	 
+	li $t9, 1
 	
-	la $s6, numberFour		
+	la $s6, numberFour
+	
 	lb $a0, -1($a1)
 	sb $a0, 0($s6)
-	lb $a0, 0($a1) 			
+
+	lb $a0, 0($a1) 
 	sb $a0, 1($s6)
-	lb $a0, 1($a1) 	
+	lb $a0, 1($a1)
 	sb $a0, 2($s6)
-	lb $a0, 2($a1) 	
+	lb $a0, 2($a1)
 	sb $a0, 3($s6)
 
 	# added 3 to $a1 because I have already read 4 characters from string
-	addi $a1, $a1, 3 		
+	addi $a1, $a1, 3 
 	j Loop
 
 emptyloop:
-	beq $t9, 0, emptyInput_Error
-	li $s5, 0			
-	li $t4, 1			
-	li $t7, 0			
+	beq $t9, 0, emptyInput_Error 
+	
+	li $s5, 0
+	li $t4, 1
+	li $t7, 0
 	la $s6, numberFour+4
-
 checkCharacters:
-	beq $t7, 4, loopValidity		
+	beq $t7, 4, loopValidity
 	addi $t7, $t7, 1 
 	addi $s6, $s6, -1
-	lb $t0, ($s6)		
-	beq $t0, 32, checkSpace
-	beq $t0, 10, checkCharacters  	
-	beq $t0, 0, checkCharacters		
-	#checking if it is a valid digit
-	li $a3, 1
-	slti $t2, $t0, 58
+	lb $t0, ($s6)
 	
+	beq $t0, 32, checkSpace	
+	beq $t0, 10, checkCharacters
+	beq $t0, 0, checkCharacters
+#checking if it is a valid digit
+	li $a3, 1				
+	slti $t2, $t0, 58       	  		
+
 	li $t3, 47
 	slt $t3, $t3, $t0
 	and $t3, $t3, $t2
 	addi $t9, $t0, -48
-	beq $t3, 1, conversion
+	beq $t3, 1, conversion 	
+
 Uppercase:
 	slti $t2, $t0, 89
 	li $t3, 64 
 	slt $t3, $t3, $t0 
 	and $t3, $t3, $t2 
 	addi $t9, $t0, -55     
-	beq $t3, 1, conversion 
+	beq $t3, 1, conversion 	
 Lowercase:	
 	slti $t2, $t0, 121				
 	li $t3, 96
@@ -77,18 +82,21 @@ Lowercase:
 	and $t3, $t3, $t2 
 	addi $t9, $t0, -87
 	bne $t3, 1, Invalid_Range_Error
-	
+
+
 conversion:
 	move $a0, $t9		
 	move $a1, $t4
 	move $a2, $s5
 	jal multiply
-	move $s5, $v0
-	move $t4, $v1
-	j checkCharacters
 	
+	move $s5, $v0				
+	move $t4, $v1				
+	
+	j checkCharacters
+		
 checkSpace:
-	beq $a3, 1, Invalid_Range_Error		
+	beq $a3, 1, Invalid_Range_Error
 	j checkCharacters
 	 	
 loopValidity:
@@ -107,8 +115,8 @@ emptyInput_Error:
 	syscall
 	j exit
 	
-Invalid_Range_Error: 
-	li $v0, 4			
+Invalid_Range_Error:
+	li $v0, 4
 	la $a0, invalidRange
 	syscall
 	
