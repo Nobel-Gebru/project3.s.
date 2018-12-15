@@ -3,7 +3,7 @@
 	invalidRange: .asciiz "Invalid base-34 number." # print invalid number
 	emptyInput: .asciiz "Input is empty." # print input is empty
 	spaceString: .space 10000 # allocate memory to string
-
+	numberFour: .space 4
 .text
 
 main:
@@ -38,7 +38,14 @@ Loop:
 	# added 3 to $a1 because I have already read 4 characters from string
 	addi $a1, $a1, 3 		
 	j Loop
-	
+
+emptyloop:
+	beq $t9, 0, emptyInput_Error
+	li $s5, 0			
+	li $t4, 1			
+	li $t7, 0			
+	la $s6, numberFour+4
+
 checkCharacters:
 	beq $t7, 4, loopValidity		
 	addi $t7, $t7, 1 
