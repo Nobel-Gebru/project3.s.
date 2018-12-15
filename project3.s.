@@ -21,36 +21,20 @@ Loop:
 	lb $a0,($a1)        			
 	addi $a1, $a1, 1
 	beq $a0, 0, emptyloop		
-	beq $a0, 10, emptyloop		#if there is an end line character then I will check if the input is empty or if it has valid input
-	beq $a0, 32, Loop		#if there is a space in front or back of the input, we just carry on with the loop	
+	beq $a0, 10, emptyloop		
+	beq $a0, 32, Loop
+	beq $t9, 1, LongMessage_Error 	
 	
-jump_spaces:
-	lb $t1,0($t0) #sends register t1 value to t0
-	addi $t0, $t0, 1
-	addi $t3, $t3, 1
-	beq $t1, 32, jump_spaces # if the value of t1 is 32 call jump_spaces
-	beq $t1, $0, emptyInput_Error
-
-displayChar:
-	lb $t1,0($t0)
-	addi $t0, $t0, 1
-	addi $t3, $t3, 1
-	beq $t1, 10, restart_program
-	beq $t1, 0, restart_program
-	bne $t1, 32, displayChar
-	syscall
-	li $v0,10  
-	syscall
+	la $s6, numberFour		#storing the first non-space character to the starting address of numberFour
+	lb $a0, -1($a1)
+	sb $a0, 0($s6)
 	
-	
-spaces_or_chars:
 	lb $t1,0($t0)
 	addi $t0, $t0, 1
 	addi $t3, $t3, 1
 	beq $t1, 10, restart_program
 	beq $t1, 0, restart_program
 	bne $t1, 32, Invalid_Range_Error
-	j spaces_or_chars
 
 restart_program:
 	sub $t0, $t0, $t3 
