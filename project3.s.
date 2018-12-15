@@ -13,14 +13,16 @@ main:
 	syscall
 	la $a1, spaceString
 	li $t9, 0
-	la $t0, spaceString	
-	lb $t1,0($t0) 
 	
-	beq $t1, 10, emptyInput_Error 	
-	beq $t1, 0, emptyInput_Error	# branch if the input is 0 
-	addi $s0, $0, 34
-	addi $t4, $0, 1 	
-	addi $t5, $0, 0 	
+	#la $t0, spaceString	
+	#lb $t1,0($t0) 
+	
+Loop:
+	lb $a0,($a1)        			
+	addi $a1, $a1, 1
+	beq $a0, 0, emptyloop		
+	beq $a0, 10, emptyloop		#if there is an end line character then I will check if the input is empty or if it has valid input
+	beq $a0, 32, Loop		#if there is a space in front or back of the input, we just carry on with the loop	
 	
 jump_spaces:
 	lb $t1,0($t0) #sends register t1 value to t0
