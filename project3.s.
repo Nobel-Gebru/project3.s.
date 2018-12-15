@@ -25,111 +25,16 @@ Loop:
 	beq $a0, 32, Loop
 	beq $t9, 1, LongMessage_Error 	
 	
-	la $s6, numberFour		#storing the first non-space character to the starting address of numberFour
+	la $s6, numberFour		
 	lb $a0, -1($a1)
 	sb $a0, 0($s6)
-	
-	lb $t1,0($t0)
-	addi $t0, $t0, 1
-	addi $t3, $t3, 1
-	beq $t1, 10, restart_program
-	beq $t1, 0, restart_program
-	bne $t1, 32, Invalid_Range_Error
+	lb $a0, 0($a1) 			
+	sb $a0, 1($s6)
+	lb $a0, 1($a1) 	
+	sb $a0, 2($s6)
+	lb $a0, 2($a1) 	
+	sb $a0, 3($s6)
 
-restart_program:
-	sub $t0, $t0, $t3 
-	la $t3, 0 			
-
-goForward:
-	lb $t1,0($t0)
-	addi $t0, $t0, 1
-	beq $t1, 32, goForward
-	
-addi $t0, $t0, -1
-
-callLength:
-	lb $t1, ($t0)
-	addi $t0, $t0, 1
-	addi $t3, $t3, 1 
-	beq $t1, 10, counter
-	beq $t1, 0, counter
-	beq $t1, 32, counter
-	beq $t3, 4, LongMessage_Error
-	j callLength
-	
-counter:
-	sub $t0, $t0, $t3
-	sub $t3, $t3, $t4
-	lb $t1, ($t0)
-	sub $s1, $t3, $t4
-	
-findExponent:	
-	beq $s1, 0, ASCII_conversion
-	mult $t4, $s0
-	mflo $t4
-	sub $s1, $s1, 1
-	j findExponent
-
-multiply:
-	mult $t1, $t4
-	mflo $t5			
-	add $t6, $t6, $t5 
-	
-	beq $t4, 1, Exit
-	div $t4, $s0 
-	mflo $t4
-add $t0, $t0, 1
-	lb $t1,0($t0)
-	j ASCII_conversion
-
-Exit:
-	move $a0, $t6 
-	li $v0, 1 
-syscall
-	li $v0,10
-	syscall
-	
-
-ASCII_conversion:
-	blt $t1, 51, Invalid_Range_Error
-	blt $t1, 61, Number
-	blt $t1, 68, Invalid_Range_Error 
-	blt $t1, 93, Upper_Case
-	blt $t1, 100, Invalid_Range_Error 
-	blt $t1, 125, Lower_Case
-	blt $t1, 131, Invalid_Range_Error 
-Upper_Case:
-	addi $t1, $t1, -55 
-	j multiply 			
-
-Lower_Case:
-addi $t1, $t1, -87 	
-	j multiply				
-
-Number:
-	addi $t1, $t1, -48 	
-	j multiply
-emptyInput_Error:
-	la $a0, emptyInput 
-	li $v0, 4 
-	syscall
-
-	li $v0,10 
-	syscall
-
-LongMessage_Error:
-	la $a0, LongMessage
-	li $v0, 4 		
-	syscall
-
-	li $v0,10 
-	syscall
-
-Invalid_Range_Error:
-	la $a0, invalidRange 
-	li $v0, 4 
-	syscall
-
-	li $v0,10 
-	syscall	 
-	jr $ra
+	# added 3 to $a1 because I have already read 4 characters from string
+	addi $a1, $a1, 3 		
+	j Loop
